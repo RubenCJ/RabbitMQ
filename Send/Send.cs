@@ -11,10 +11,10 @@ public class Program
         {
             using(var channel = connection.CreateModel())
             {
-                channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete:false, arguments: null);
-                string message = "Hola Ruben!";
+                channel.ExchangeDeclare(exchange:"logs", type: ExchangeType.Fanout);
+                string message = GetMessage(args);
                 var body = Encoding.UTF8.GetBytes(message);
-                channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
+                channel.BasicPublish(exchange: "logs", routingKey: "", basicProperties: null, body: body);
                 Console.Write($"[x] Send {message}");
 
             }
@@ -22,5 +22,11 @@ public class Program
 
         Console.WriteLine("Press any key to exit...");
         Console.ReadLine();
+    }
+
+    private static string GetMessage(string[] args)
+    {
+        return args.Length > 0 ? string.Join("", args) : "info: Hola Mundo II";
+
     }
 }
